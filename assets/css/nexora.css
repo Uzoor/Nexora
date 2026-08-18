@@ -1,0 +1,818 @@
+/* ==========================================================================
+   NEXORA OIL & GAS SERVICES LIMITED — design system
+   Palette sampled from the corporate mark: navy #003B66, flame #F0A22E.
+   Two themes off one token set; dark is the default.
+   ========================================================================== */
+
+:root{
+  color-scheme: dark;
+
+  /* --- Colour: sampled from the corporate mark and product photography --- */
+  --ink:        #04121e;   /* deepest navy-black — page ground */
+  --ink-2:      #071c2c;   /* raised panel */
+  --navy:       #003b66;   /* corporate navy (logo field) */
+  --flame:      #f0a22e;   /* corporate flame — primary accent */
+  --flame-2:    #f0a22e;   /* flame at label scale — see note in the light theme */
+  --paper:      #f2f4f7;   /* document sheet */
+  --slate:      #12293b;   /* text on paper */
+  --mist:       #93a9bf;   /* secondary text on dark */
+  --mist-2:     #7290aa;   /* tertiary text on dark — lightened to clear 4.5:1
+                              on the raised --ink-2 panel, not just on --ink */
+  --conform:    #5bc08a;   /* conformance mark — informational only */
+
+  --line:       rgba(147,169,191,.20);
+  --line-2:     rgba(147,169,191,.36);
+  --line-paper: rgba(18,41,59,.16);
+  --hair:         rgba(147,169,191,.10);  /* table row rule */
+  --hover-tint:   rgba(147,169,191,.05);
+  --input-bg:     rgba(147,169,191,.06);
+  --panel-tint:   rgba(147,169,191,.05);
+  --conform-line: rgba(91,192,138,.42);
+  --flame-line:   rgba(240,162,46,.42);
+  --focus-tint:   rgba(240,162,46,.05);
+
+  /* --- Semantic surfaces ---------------------------------------------------
+     Splitting these off --paper is what makes a second theme possible.
+     --paper used to mean two different things at once: "text on the ground"
+     and "the light band's background". A theme flip needs those to move in
+     opposite directions, so they are now --fg and --band-alt.
+     --------------------------------------------------------------------- */
+  --fg:          #f2f4f7;   /* text on the current ground */
+  --band-alt:    #f2f4f7;   /* the contrasting band's ground */
+  --band-alt-fg: #12293b;
+  --masthead-bg: rgba(4,18,30,.82);
+  --drawer-bg:   #02101c;
+  --scrim:       rgba(2,10,18,.7);
+  --foot-bg:     #020c15;
+
+  /* Photographic grounds: veil stops, and how far back the picture sits */
+  --veil-a:  #04121e;
+  --veil-b:  rgba(4,18,30,.90);
+  --veil-c:  rgba(4,18,30,.52);
+  --veil-p:  rgba(4,18,30,.88);
+  --veil-q:  rgba(4,18,30,.55);
+  --bg-op:   .30;
+  --head-op: .22;
+
+  /* Brand artwork. Painted as backgrounds so a theme only ever downloads the
+     one ink weight it needs — two <img> variants would fetch both. */
+  --mark:   url("../img/mark-light.webp?v=7");
+  --lockup: url("../img/lockup-light.webp?v=7");
+
+  /* --- Type --- */
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:    "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Fluid type scale — 1.28 ratio at the top end */
+  --t-hero:  clamp(2.6rem, 6.2vw, 5.4rem);
+  --t-h2:    clamp(1.9rem, 3.6vw, 3.1rem);
+  --t-h3:    clamp(1.25rem, 1.7vw, 1.55rem);
+  --t-lede:  clamp(1.06rem, 1.25vw, 1.24rem);
+  --t-body:  1.0rem;
+  --t-mono:  .688rem;
+
+  /* --- Space --- */
+  --gutter:  clamp(20px, 4vw, 64px);
+  --band-y:  clamp(76px, 9vw, 148px);
+  --rail-w:  92px;
+  --shell:   1440px;
+
+  --ease: cubic-bezier(.2,.7,.25,1);
+}
+
+/* ---------------------------------------------------------- light theme ---
+   The same document printed on paper instead of read on a screen. Nothing is
+   patched: --ink becomes the sheet, --fg becomes ink, and the accents drop to
+   the weights that clear 4.5:1 on white — which are the exact values
+   .band--paper has always used, promoted to the root. Set on <html> by an
+   inline script in <head> so the first paint is already correct.
+   ------------------------------------------------------------------------ */
+:root[data-theme="light"]{
+  color-scheme: light;
+
+  --ink:         #ffffff;   /* the sheet */
+  --ink-2:       #e7ebf1;   /* raised / hover */
+  --fg:          #12293b;
+  --band-alt:    #eef1f5;   /* second paper stock, not an inversion */
+  --band-alt-fg: #12293b;
+
+  --mist:    #3d5468;
+  --mist-2:  #4d6376;
+  --flame:   #8f5a0d;
+  --flame-2: #8f5a0d;
+  --conform: #26714c;
+
+  --line:         rgba(18,41,59,.16);
+  --line-2:       rgba(18,41,59,.30);
+  --hair:         rgba(18,41,59,.09);
+  --hover-tint:   rgba(18,41,59,.04);
+  --input-bg:     rgba(18,41,59,.035);
+  --panel-tint:   rgba(18,41,59,.035);
+  --conform-line: rgba(38,113,76,.45);
+  --flame-line:   rgba(143,90,13,.45);
+  --focus-tint:   rgba(143,90,13,.07);
+
+  --masthead-bg: rgba(255,255,255,.86);
+  --drawer-bg:   #ffffff;
+  --scrim:       rgba(18,41,59,.42);
+
+  /* Veils fade to the sheet, and the photograph sits further back: at full
+     strength a dark industrial frame turns the top of a white page grey. */
+  --veil-a:  #ffffff;
+  --veil-b:  rgba(255,255,255,.90);
+  --veil-c:  rgba(255,255,255,.58);
+  --veil-p:  rgba(255,255,255,.90);
+  --veil-q:  rgba(255,255,255,.62);
+  --bg-op:   .20;
+  --head-op: .16;
+
+  --mark:   url("../img/mark-dark.webp?v=7");
+  --lockup: url("../img/lockup-dark.webp?v=7");
+}
+
+/* ------------------------------------------------ permanently dark islands ---
+   Three things stay dark in every theme, because they are objects rather than
+   page surface: the navy call-to-action band, the document-control footer, and
+   the capability panel. Each re-declares the token contract so its
+   contents keep light-on-dark values even when the page around them is white.
+   In the dark theme this whole block is a no-op.
+   -------------------------------------------------------------------------- */
+.band--navy,
+.foot,
+.caps,
+.office{
+  --ink:     #04121e;
+  --ink-2:   #071c2c;
+  --fg:      #f2f4f7;
+  --mist:    #93a9bf;
+  --mist-2:  #7290aa;
+  --flame:   #f0a22e;
+  --flame-2: #f0a22e;
+  --conform: #5bc08a;
+  --line:         rgba(147,169,191,.20);
+  --line-2:       rgba(147,169,191,.36);
+  --hair:         rgba(147,169,191,.10);
+  --hover-tint:   rgba(147,169,191,.05);
+  --input-bg:     rgba(147,169,191,.06);
+  --panel-tint:   rgba(147,169,191,.05);
+  --conform-line: rgba(91,192,138,.42);
+  --flame-line:   rgba(240,162,46,.42);
+  --focus-tint:   rgba(240,162,46,.05);
+  --lockup:  url("../img/lockup-light.webp?v=7");
+  color:var(--fg);
+}
+/* The navy band and the capability panel are lifted navy grounds rather than ink.
+   --mist-2 is tuned for ink and drops to 4.3:1 on them; the lighter mist holds. */
+.band--navy,
+.caps{ --mist-2:#93a9bf; }
+
+/* --------------------------------------------------------------- reset --- */
+*,*::before,*::after{ box-sizing:border-box; }
+/* Belt to go with the braces. `clip` is deliberate and is not the same as
+   `hidden`: `hidden` turns the element into a scroll container (which is how it
+   breaks `position:sticky`, and why it was rejected earlier), whereas `clip`
+   creates no scrollport at all — there is simply nowhere for a stray box to
+   scroll to. `hidden` is declared first as the fallback for engines older than
+   Chrome 90 / Safari 16. Causes are still fixed upstream; this only guarantees
+   that a future mistake degrades into a clipped edge instead of a page that
+   slides sideways. */
+html{
+  -webkit-text-size-adjust:100%;
+  overflow-x:hidden;
+  overflow-x:clip;
+  overscroll-behavior-x:none;
+}
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--fg);
+  font-family:var(--body);
+  font-size:var(--t-body);
+  line-height:1.68;
+  font-optical-sizing:auto;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  overflow-x:clip;
+}
+img{ display:block; max-width:100%; height:auto; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+h1,h2,h3,h4{ margin:0; font-family:var(--display); font-weight:700; line-height:1.02; letter-spacing:-.022em; }
+p{ margin:0; }
+ul{ margin:0; padding:0; list-style:none; }
+table{ border-collapse:collapse; width:100%; }
+/* Long unbreakable strings — technical@nexoraeil.com is 23 characters — would
+   otherwise force a narrow column wider than the screen. break-word only acts
+   when a word genuinely cannot fit, so normal prose is untouched. */
+p,li,td,th,dd,figcaption,address,a{ overflow-wrap:break-word; }
+:focus-visible{ outline:2px solid var(--flame); outline-offset:3px; border-radius:2px; }
+.sr{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+.skip{
+  position:absolute; left:var(--gutter); top:-100px; z-index:200;
+  background:#f0a22e; color:#14100a; padding:.7rem 1.1rem;
+  font-family:var(--mono); font-size:var(--t-mono); letter-spacing:.14em; text-transform:uppercase;
+  transition:top .18s var(--ease);
+}
+.skip:focus{ top:14px; }
+
+/* ----------------------------------------------------------- primitives --- */
+.shell{ width:100%; max-width:var(--shell); margin-inline:auto; padding-inline:var(--gutter); }
+
+/* The document grid: narrow spec rail + content. This is the site's spine. */
+.docgrid{ display:grid; grid-template-columns:var(--rail-w) minmax(0,1fr); gap:clamp(24px,4vw,56px); }
+
+.band{ padding-block:var(--band-y); position:relative; }
+.band--tight{ padding-block:clamp(52px,6vw,92px); }
+/* A light band re-declares the tokens rather than patching each rule. Every
+   value below clears 4.5:1 on --paper, so anything nested inherits an
+   accessible colour automatically instead of needing its own override. */
+.band--paper{
+  background:var(--band-alt); color:var(--band-alt-fg);
+  --mist:#3d5468;                    /* 7.15:1 on paper */
+  --mist-2:#4d6376;                  /* 5.67:1 */
+  --flame:#8f5a0d;                   /* 5.24:1 — bronze, the gold read at ink weight */
+  --flame-2:#8f5a0d;                 /* four inline styles on the homepage ask for
+                                        --flame-2; defining it in every scope where
+                                        --flame is defined is what makes those four
+                                        labels follow the theme instead of falling
+                                        back to inherited body colour. */
+  --conform:#26714c;                 /* 5.37:1 — the mark holds on paper too */
+  --line:rgba(18,41,59,.16);
+  --line-2:rgba(18,41,59,.30);
+}
+.band--navy{ background:linear-gradient(178deg, var(--navy) 0%, #01243f 100%); }
+.band--rule{ border-top:1px solid var(--line); }
+.band--paper.band--rule{ border-top-color:var(--line-paper); }
+
+/* Monospace utility label — the vocabulary of a spec sheet */
+.mono{
+  font-family:var(--mono); font-size:var(--t-mono); font-weight:500;
+  letter-spacing:.17em; text-transform:uppercase; line-height:1.4;
+}
+.mono--flame{ color:var(--flame); }
+.mono--mist{ color:var(--mist-2); }
+
+.lede{ font-size:var(--t-lede); line-height:1.62; color:var(--mist); max-width:60ch; }
+
+/* ---------------------------------------------------------- spec rail --- */
+.rail{
+  position:sticky; top:120px; align-self:start;
+  display:flex; flex-direction:column; align-items:flex-start; gap:14px;
+  padding-top:6px;
+}
+.rail__code{
+  font-family:var(--display); font-size:1.5rem; font-weight:700;
+  color:var(--flame); letter-spacing:-.03em; line-height:1;
+}
+.rail__line{ width:1px; height:clamp(48px,7vw,104px); background:var(--line-2); }
+.band--paper .rail__line{ background:var(--line-paper); }
+.rail__label{
+  writing-mode:vertical-rl; text-orientation:mixed;
+  font-family:var(--mono); font-size:var(--t-mono); font-weight:500;
+  letter-spacing:.24em; text-transform:uppercase; color:var(--mist-2);
+}
+/* No colour override needed — the rail label inherits the band's --mist-2 */
+
+/* ------------------------------------------------------------- masthead --- */
+/* The frosted blur sits on a pseudo-element, NOT on .masthead itself. This is
+   load-bearing, not a stylistic choice. A `backdrop-filter` makes its element
+   the containing block for every `position:fixed` DESCENDANT — and the
+   off-canvas `.nav` is a descendant. That silently demoted the drawer from
+   viewport-fixed to masthead-relative, so its closed-state `translateX(100%)`
+   parked a `min(88vw,340px)` panel just past the masthead's right edge and
+   handed the document ~317px of real horizontal scroll on a 360px phone. That
+   was the right-side overlap, on every page, the whole time — and no amount of
+   grid work could reach it. A pseudo-element is a CHILD, so it blurs exactly
+   the same backdrop and traps nothing. `.masthead` still forms its own
+   stacking context via sticky + z-index, so paint order is unchanged.
+   Do not move `backdrop-filter` back onto `.masthead`. */
+.masthead{
+  position:sticky; top:0; z-index:100;
+  background:var(--masthead-bg);
+  border-bottom:1px solid var(--line);
+}
+.masthead::before{
+  content:""; position:absolute; inset:0; z-index:-1;
+  backdrop-filter:blur(14px) saturate(140%);
+  pointer-events:none;
+}
+.masthead__in{
+  display:flex; align-items:center; gap:clamp(16px,2.4vw,28px);
+  min-height:72px;
+}
+/* Nav is pushed right by margin rather than space-between, so the controls
+   that follow it stay grouped instead of being spread apart. */
+.masthead__acts{ display:flex; align-items:center; gap:10px; flex:0 0 auto; }
+/* The brand may shrink (min-width:0) so it can never push the controls off
+   the right edge on a narrow phone. Both sides were flex:0 0 auto, which
+   guaranteed an overflowing masthead below ~390px. */
+.brand{ display:flex; align-items:center; gap:13px; flex:0 1 auto; min-width:0; }
+/* The mark, cropped to its ink box and painted from the theme's token. */
+.brand__logo{
+  display:block; height:42px; aspect-ratio:160/152; width:auto; flex:0 0 auto;
+  background:var(--mark) no-repeat 50% 50%/contain;
+}
+.brand__word{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+.brand__word b{
+  font-family:var(--display); font-weight:700; font-size:1rem;
+  letter-spacing:.15em; text-transform:uppercase; line-height:1;
+}
+.brand__word i{
+  font-family:var(--mono); font-style:normal; font-size:.5rem;
+  letter-spacing:.19em; text-transform:uppercase; color:var(--flame); line-height:1;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+/* Full lockup, used once per page at the sign-off. The footer is a dark
+   island in both themes, so it always resolves to the light-ink artwork. */
+.lockup{
+  display:block; width:min(232px,58vw); aspect-ratio:640/538;
+  background:var(--lockup) no-repeat 50% 50%/contain;
+}
+
+.nav{ display:flex; align-items:center; gap:clamp(14px,2.1vw,30px); margin-left:auto; }
+.nav__link{
+  font-family:var(--mono); font-size:var(--t-mono); font-weight:500;
+  letter-spacing:.15em; text-transform:uppercase; color:var(--mist);
+  padding:6px 0; position:relative; transition:color .2s var(--ease);
+}
+.nav__link::after{
+  content:""; position:absolute; left:0; bottom:0; height:1px; width:0;
+  background:var(--flame); transition:width .28s var(--ease);
+}
+.nav__link:hover{ color:var(--fg); }
+.nav__link:hover::after,
+.nav__link[aria-current="page"]::after{ width:100%; }
+.nav__link[aria-current="page"]{ color:var(--flame); }
+
+.navtoggle{ display:none; }
+
+/* -------------------------------------------------------------- buttons --- */
+.btn{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--mono); font-size:var(--t-mono); font-weight:600;
+  letter-spacing:.15em; text-transform:uppercase;
+  padding:14px 22px; border:1px solid transparent;
+  transition:background .22s var(--ease), color .22s var(--ease), border-color .22s var(--ease), transform .22s var(--ease);
+}
+.btn__arw{ transition:transform .28s var(--ease); }
+.btn:hover .btn__arw{ transform:translateX(5px); }
+/* Fixed brand object: the button keeps the true gold on every band. */
+.btn--flame{ background:#f0a22e; color:#14100a; }
+.btn--flame:hover{ background:#ffb648; }
+.btn--ghost{ border-color:var(--line-2); color:var(--fg); }
+.btn--ghost:hover{ border-color:var(--flame); color:var(--flame); }
+.band--paper .btn--ghost{ border-color:var(--line-paper); color:var(--band-alt-fg); }
+.band--paper .btn--ghost:hover{ border-color:var(--flame); }
+.btn--sm{ padding:11px 16px; }
+
+/* --------------------------------------------------------- document head --- */
+.dochead{ max-width:74ch; }
+.dochead__meta{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+.dochead__meta .bar{ height:1px; width:clamp(28px,6vw,90px); background:var(--line-2); }
+.band--paper .dochead__meta .bar{ background:var(--line-paper); }
+.dochead__title{ font-size:var(--t-h2); margin-bottom:18px; }
+.dochead__title em{ font-family:var(--body); font-style:italic; font-weight:400; letter-spacing:-.01em; color:var(--flame); }
+
+/* ----------------------------------------------------------------- hero --- */
+.hero{ position:relative; overflow:hidden; padding-block:clamp(56px,7vw,104px) clamp(64px,8vw,120px); }
+/* Abstract product texture — tolerates upscaling where detailed photos would not */
+.hero__bg{
+  position:absolute; inset:0; z-index:0;
+  background-image:url("../img/industrial-oil-flow.webp");
+  background-size:cover; background-position:50% 46%;
+  opacity:var(--bg-op); filter:saturate(.9);
+}
+.hero__veil{
+  position:absolute; inset:0; z-index:1;
+  background:
+    linear-gradient(96deg, var(--veil-a) 6%, var(--veil-b) 46%, var(--veil-c) 100%),
+    linear-gradient(0deg, var(--veil-a) 2%, transparent 40%);
+}
+.hero__in{ position:relative; z-index:2; }
+.hero__grid{
+  display:grid; grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);
+  gap:clamp(32px,5vw,72px); align-items:end;
+}
+.hero__stamp{ display:flex; align-items:center; gap:14px; margin-bottom:26px; }
+.hero__stamp .dot{ width:6px; height:6px; background:var(--conform); border-radius:50%; box-shadow:0 0 0 4px rgba(91,192,138,.16); }
+.hero__title{ font-size:var(--t-hero); font-weight:800; letter-spacing:-.035em; margin-bottom:24px; }
+.hero__title em{
+  font-family:var(--body); font-style:italic; font-weight:400;
+  letter-spacing:-.014em; color:var(--flame);
+}
+.hero__lede{ max-width:47ch; margin-bottom:34px; }
+.hero__acts{ display:flex; flex-wrap:wrap; gap:12px; }
+
+/* ------------------------------------------ what we do, at a glance --- */
+.caps{
+  background:linear-gradient(170deg, rgba(9,43,69,.94), rgba(4,18,30,.97));
+  border:1px solid var(--line-2);
+  box-shadow:0 34px 90px -40px rgba(0,0,0,.9);
+}
+.caps__top{
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  padding:15px 20px; border-bottom:1px solid var(--line);
+  background:rgba(0,59,102,.5);
+}
+.caps__list{ list-style:none; margin:0; padding:0; }
+.caps__list li + li{ border-top:1px solid rgba(147,169,191,.08); }
+.caps__link{
+  display:grid; grid-template-columns:auto minmax(0,1fr) auto;
+  gap:13px; align-items:baseline;
+  padding:12px 20px; text-decoration:none; color:var(--fg);
+  transition:background .22s var(--ease), color .22s var(--ease);
+}
+.caps__link:hover,.caps__link:focus-visible{ background:rgba(0,59,102,.42); color:var(--flame); }
+.caps__n{
+  font-family:var(--mono); font-size:.58rem; letter-spacing:.14em;
+  color:var(--mist-2); font-variant-numeric:tabular-nums;
+}
+.caps__t{ font-size:.9rem; letter-spacing:-.005em; }
+.caps__arw{
+  color:var(--flame); opacity:0; transform:translateX(-3px);
+  transition:opacity .22s var(--ease), transform .22s var(--ease);
+}
+.caps__link:hover .caps__arw,.caps__link:focus-visible .caps__arw{ opacity:1; transform:none; }
+.caps__foot{
+  padding:13px 20px; border-top:1px solid var(--line);
+  background:rgba(0,59,102,.32);
+}
+
+/* ------------------------------------------------------------- fact bar --- */
+.facts{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:1px solid var(--line); }
+.fact{ padding:clamp(26px,3vw,40px) clamp(18px,2vw,32px); border-right:1px solid var(--line); }
+.fact:last-child{ border-right:0; }
+.fact__n{
+  font-family:var(--display); font-weight:700; font-size:clamp(2rem,3.4vw,3rem);
+  letter-spacing:-.04em; line-height:1; color:var(--fg); font-variant-numeric:tabular-nums;
+  display:flex; align-items:baseline; gap:3px;
+}
+.fact__n sup{ font-size:.4em; color:var(--flame); top:-.7em; letter-spacing:0; }
+.fact__l{ margin-top:12px; color:var(--mist-2); }
+
+
+/* ---------------------------------------------------------- split plate --- */
+/* min(Npx,100%) is load-bearing: a bare minmax(310px,1fr) sets a hard floor the
+   track cannot go below, so on a 320px phone the grid overflows its container
+   and drags the whole page sideways. Wrapping the floor in min() lets the last
+   surviving column collapse to the available width instead. Same everywhere. */
+.split{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(310px,100%),1fr)); gap:clamp(32px,4.5vw,64px); align-items:center; }
+.split--wide{ grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); }
+.plate{ position:relative; }
+.plate img{ width:100%; }
+.plate__cap{
+  display:flex; align-items:center; gap:10px; margin-top:12px;
+  padding-top:10px; border-top:1px solid var(--line);
+}
+.band--paper .plate__cap{ border-top-color:var(--line-paper); }
+.plate__cap b{ color:var(--flame); font-weight:600; }
+.plate--framed img{ border:1px solid var(--line); }
+
+/* ------------------------------------------------------- method sequence --- */
+/* Genuinely ordered: this is a chain of custody, so numbering is information. */
+.method{ display:grid; gap:1px; background:var(--line); }
+.step{
+  background:var(--ink); display:grid;
+  grid-template-columns:74px minmax(0,1fr) minmax(0,1.15fr);
+  gap:clamp(16px,3vw,42px); padding:clamp(24px,3vw,38px) clamp(16px,2vw,30px);
+  align-items:start; transition:background .3s var(--ease);
+}
+.band--paper .step{ background:var(--band-alt); }
+.step:hover{ background:var(--ink-2); }
+.band--paper .step:hover{ background:#fff; }
+.step__n{
+  font-family:var(--display); font-size:1.6rem; font-weight:700;
+  letter-spacing:-.04em; color:var(--flame); line-height:1;
+}
+.step h3{ font-size:var(--t-h3); margin-bottom:8px; }
+.step__meta{ color:var(--mist-2); }
+.step p{ color:var(--mist); font-size:.95rem; }
+
+/* -------------------------------------------------------------- dataset --- */
+.dataset{ border:1px solid var(--line); overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.band--paper .dataset{ border-color:var(--line-paper); }
+.dataset table{ min-width:660px; }
+.dataset caption{ text-align:left; padding:16px 20px; border-bottom:1px solid var(--line); color:var(--mist-2); font-family:var(--mono); font-size:var(--t-mono); letter-spacing:.17em; text-transform:uppercase; }
+.band--paper .dataset caption{ border-bottom-color:var(--line-paper); }
+.dataset th{
+  text-align:left; padding:13px 20px; font-family:var(--mono); font-weight:500;
+  font-size:var(--t-mono); letter-spacing:.15em; text-transform:uppercase;
+  color:var(--mist-2); border-bottom:1px solid var(--line-2); white-space:nowrap;
+}
+.band--paper .dataset th{ border-bottom-color:var(--line-paper); }
+.dataset td{
+  padding:15px 20px; border-bottom:1px solid var(--hair);
+  font-size:.92rem; vertical-align:top;
+}
+.band--paper .dataset td{ border-bottom-color:rgba(18,41,59,.09); }
+.dataset tr:last-child td{ border-bottom:0; }
+.dataset tbody tr{ transition:background .2s var(--ease); }
+.dataset tbody tr:hover{ background:var(--hover-tint); }
+
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  border:1px solid var(--conform-line); color:var(--conform);
+  padding:3px 8px; font-family:var(--mono); font-size:.56rem;
+  font-weight:600; letter-spacing:.13em; text-transform:uppercase; white-space:nowrap;
+}
+.chip--flame{ border-color:var(--flame-line); color:var(--flame); }
+
+/* ----------------------------------------------------------- pull quote --- */
+.pull{ max-width:36ch; }
+.pull__q{
+  font-family:var(--body); font-size:clamp(1.3rem,2.3vw,2rem); line-height:1.34;
+  font-style:italic; letter-spacing:-.015em;
+}
+.pull__by{ margin-top:22px; padding-top:16px; border-top:1px solid var(--line); }
+
+/* ----------------------------------------------------------------- form --- */
+.form{ display:grid; gap:22px; }
+.form__row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr)); gap:22px; }
+.field{ display:flex; flex-direction:column; gap:9px; }
+.field > span{ color:var(--mist-2); }
+.field input,.field select,.field textarea{
+  font-family:var(--mono); font-size:.82rem; color:var(--fg);
+  background:var(--input-bg); border:1px solid var(--line);
+  padding:13px 14px; width:100%; transition:border-color .2s var(--ease), background .2s var(--ease);
+}
+.field textarea{ resize:vertical; min-height:132px; line-height:1.6; }
+.field input::placeholder,.field textarea::placeholder{ color:var(--mist-2); }
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--flame); background:var(--focus-tint); outline:none;
+}
+.field select{ appearance:none; background-image:linear-gradient(45deg,transparent 50%,var(--mist) 50%),linear-gradient(135deg,var(--mist) 50%,transparent 50%); background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%; background-size:5px 5px,5px 5px; background-repeat:no-repeat; }
+.field select option{ background:var(--ink); }
+.formnote{ display:flex; gap:12px; align-items:flex-start; padding:16px; border:1px solid var(--line); }
+
+/* --------------------------------------------------------------- footer --- */
+.foot{ background:var(--foot-bg); border-top:1px solid var(--line); }
+.foot__main{ display:grid; grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr)); gap:clamp(28px,4vw,56px); padding-block:clamp(48px,6vw,84px); }
+.foot h4{ font-family:var(--mono); font-size:var(--t-mono); font-weight:500; letter-spacing:.17em; text-transform:uppercase; color:var(--mist-2); margin-bottom:18px; }
+.foot__list{ display:flex; flex-direction:column; gap:11px; }
+.foot__list a,.foot__list li{ font-size:.9rem; color:var(--mist); }
+.foot__list a{ transition:color .2s var(--ease); }
+.foot__list a:hover{ color:var(--flame); }
+.foot__tag{ font-family:var(--display); font-weight:700; font-size:1.05rem; letter-spacing:-.02em; margin:18px 0 10px; }
+.foot__base{ display:flex; flex-wrap:wrap; gap:14px 26px; justify-content:space-between; padding-block:20px; border-top:1px solid var(--line); }
+
+/* ------------------------------------------------------------- reveals --- */
+.rv{ opacity:0; transform:translateY(20px); }
+.rv.is-in{ opacity:1; transform:none; transition:opacity .7s var(--ease), transform .7s var(--ease); }
+.rv-d1.is-in{ transition-delay:.08s; }
+.rv-d2.is-in{ transition-delay:.16s; }
+.rv-d3.is-in{ transition-delay:.24s; }
+
+/* ---------------------------------------------------------- responsive ---
+   Every single-column track below is written `minmax(0,1fr)`, never a bare
+   `1fr`. A bare `1fr` is shorthand for `minmax(auto,1fr)`, and an `auto`
+   minimum refuses to go below the widest unbreakable thing inside the track —
+   a long address, a wide table, a mono code string. The track then grows past
+   the viewport and everything to its right runs off the screen. Nothing in
+   here relies on `overflow-x:hidden` to look correct. */
+@media (max-width:1180px){
+  :root{ --rail-w:64px; }
+  .hero__grid{ grid-template-columns:minmax(0,1fr); gap:44px; align-items:start; }
+  .caps{ max-width:560px; }
+  .caps__link,.caps__top,.caps__foot{ padding-inline:16px; }
+  .split--wide{ grid-template-columns:minmax(0,1fr); }
+  .foot__main{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:900px){
+  .navtoggle{
+    display:inline-flex; align-items:center; gap:9px;
+    font-family:var(--mono); font-size:var(--t-mono); font-weight:600;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--fg);
+    border:1px solid var(--line-2); padding:10px 14px;
+  }
+  .navtoggle__ic{ display:grid; gap:3px; }
+  .navtoggle__ic i{ width:14px; height:1px; background:currentColor; transition:transform .25s var(--ease), opacity .25s var(--ease); }
+  .nav{
+    position:fixed; inset:0 0 0 auto; width:min(88vw,340px);
+    background:var(--drawer-bg); border-left:1px solid var(--line);
+    flex-direction:column; align-items:stretch; justify-content:flex-start;
+    gap:0; padding:100px 30px 40px;
+    transform:translateX(100%); transition:transform .38s var(--ease), visibility .38s var(--ease);
+    visibility:hidden;
+    z-index:99; overflow-y:auto;
+  }
+  .nav.is-open{ transform:none; visibility:visible; }
+  .nav__link{ padding:19px 0; border-bottom:1px solid var(--line); font-size:.74rem; }
+  .nav__link::after{ display:none; }
+  .nav .btn{ margin-top:26px; justify-content:center; }
+  .navscrim{
+    position:fixed; inset:0; background:var(--scrim);
+    backdrop-filter:blur(3px); z-index:98; opacity:0; pointer-events:none;
+    transition:opacity .3s var(--ease);
+  }
+  .navscrim.is-open{ opacity:1; pointer-events:auto; }
+  .masthead__acts{ margin-left:auto; }
+  /* top:120px was measured against the desktop masthead; once the bar is 72px
+     the rail floated in the middle of nowhere on a landscape phone. */
+  .rail{ top:92px; }
+  .facts{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .fact{ border-bottom:1px solid var(--line); }
+  .fact:nth-child(2n){ border-right:0; }
+  .step{ grid-template-columns:52px minmax(0,1fr); }
+  .step__meta{ grid-column:2; }
+  .step__txt{ grid-column:2; }
+}
+@media (max-width:680px){
+  :root{ --t-mono:.64rem; }
+  .docgrid{ grid-template-columns:minmax(0,1fr); gap:20px; }
+  /* Rail turns horizontal on small screens rather than disappearing */
+  .rail{ position:static; flex-direction:row; align-items:center; gap:12px; padding-top:0; }
+  .rail__code{ font-size:1.15rem; }
+  .rail__line{ width:36px; height:1px; }
+  .rail__label{ writing-mode:horizontal-tb; }
+  /* `auto`, not a fixed 62px: the widest unit string (`0.04 % m/m`) needs ~67px
+     and a fixed track will not grow, so text-align:right pushed the over-wide
+     nowrap line LEFT, over the parameter name. */
+  /* The status column is gone at this width — the flag now sits under the
+     value — so its heading has no column to head. Left in place it wrapped
+     onto a second row underneath "Parameter / method". */
+  .foot__main{ grid-template-columns:minmax(0,1fr); }
+  .hero__acts .btn{ flex:1 1 100%; justify-content:center; }
+}
+/* --------------------------------------------------- narrow-phone masthead ---
+   Measured, not guessed: at 320px the bar needed ~351px of content in 280px of
+   space, and because both sides refused to shrink the brand ran underneath the
+   controls. The sub-line and the word "Menu" are the two things that can go
+   without losing meaning — the brand link keeps its full aria-label, and the
+   toggle keeps its accessible name via the visually-hidden span below. */
+@media (max-width:560px){
+  .brand__logo{ height:36px; }
+  .brand__word i{ display:none; }
+  .navtoggle{ padding:10px 11px; gap:0; }
+  .navtoggle [data-navtoggle-label]{
+    position:absolute; width:1px; height:1px; overflow:hidden;
+    clip:rect(0 0 0 0); white-space:nowrap;
+  }
+}
+@media (max-width:400px){
+  :root{ --gutter:16px; --t-hero:clamp(2.15rem,8.4vw,5.4rem); }
+  .facts{ grid-template-columns:minmax(0,1fr); }
+  .fact{ border-right:0; }
+  .fact:last-child{ border-bottom:0; }
+}
+
+/* -------------------------------------------------------- motion policy --- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  .rv{ opacity:1 !important; transform:none !important; }
+}
+
+/* ==========================================================================
+   COMPONENTS ADDED AFTER THE CLIENT SUPPLIED FINAL SERVICE COPY
+   ========================================================================== */
+
+/* ------------------------------------------- services index (contents) --- */
+/* A table of contents, not a card grid — the document conceit, and it holds
+   all seven lines without a ragged final row. */
+.svcindex{ border-top:1px solid var(--line-2); }
+.band--paper .svcindex{ border-top-color:var(--line-paper); }
+.svcindex__row{
+  display:grid; grid-template-columns:58px minmax(0,1fr) minmax(0,1.35fr) 30px;
+  gap:clamp(12px,2.2vw,34px); align-items:baseline;
+  padding:clamp(19px,2.3vw,29px) 6px;
+  border-bottom:1px solid var(--line);
+  transition:background .26s var(--ease);
+}
+.band--paper .svcindex__row{ border-bottom-color:var(--line-paper); }
+.svcindex__row:hover{ background:var(--ink-2); }
+.band--paper .svcindex__row:hover{ background:#fff; }
+.svcindex__code{ font-family:var(--mono); font-size:var(--t-mono); font-weight:600; letter-spacing:.14em; color:var(--flame); }
+.svcindex__ttl{ font-family:var(--display); font-weight:600; font-size:clamp(1.02rem,1.45vw,1.28rem); letter-spacing:-.018em; line-height:1.2; }
+.svcindex__note{ font-size:.92rem; color:var(--mist); }
+.svcindex__arw{ font-family:var(--mono); color:var(--mist-2); justify-self:end; transition:transform .26s var(--ease), color .26s var(--ease); }
+.svcindex__row:hover .svcindex__arw{ transform:translateX(5px); color:var(--flame); }
+
+/* --------------------------------------------------- inline tag list --- */
+
+/* --------------------------------------------- values / reasons blocks --- */
+.grid3{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(258px,100%),1fr)); gap:1px; background:var(--line); }
+.cell{ background:var(--ink); padding:clamp(24px,2.8vw,34px); }
+.band--paper .cell{ background:var(--band-alt); }
+.cell__k{ display:flex; align-items:center; gap:11px; margin-bottom:13px; }
+.cell__k b{ font-family:var(--mono); font-size:var(--t-mono); font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--flame); }
+.cell__k i{ flex:1; height:1px; background:var(--line); font-style:normal; }
+.band--paper .cell__k i{ background:var(--line-paper); }
+.cell h3{ font-size:var(--t-h3); margin-bottom:9px; }
+.cell p{ color:var(--mist); font-size:.94rem; }
+
+/* --------------------------------------------- vision / mission blocks --- */
+.stmt{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr)); gap:clamp(28px,3.6vw,58px); }
+.stmt__b{ border-top:2px solid var(--flame); padding-top:22px; }
+.stmt__b h3{ font-size:clamp(1.5rem,2.4vw,2.05rem); margin:14px 0 14px; letter-spacing:-.028em; }
+.stmt__b p{ color:var(--mist); }
+
+/* -------------------------------------------------------- office cards --- */
+.offices{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr)); gap:1px; background:var(--line); }
+.office{ background:var(--ink); padding:clamp(22px,2.6vw,30px); }
+.office h3{ font-family:var(--mono); font-size:var(--t-mono); font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--flame); margin-bottom:14px; }
+.office p{ color:var(--mist); font-size:.92rem; }
+.office a{ color:var(--fg); border-bottom:1px solid var(--line-2); transition:color .2s var(--ease), border-color .2s var(--ease); }
+.office a:hover{ color:var(--flame); border-color:var(--flame); }
+
+@media (max-width:760px){
+  /* Every cell is placed explicitly here. With only the note positioned, the
+     auto-placement cursor sat past the last column after it and pushed the
+     arrow onto a third row at the left — the row looked broken. */
+  .svcindex__row{ grid-template-columns:46px minmax(0,1fr) 24px; row-gap:8px; align-items:start; }
+  .svcindex__code{ grid-column:1; grid-row:1; }
+  .svcindex__ttl { grid-column:2; grid-row:1; }
+  .svcindex__arw { grid-column:3; grid-row:1; }
+  .svcindex__note{ grid-column:2 / 4; grid-row:2; }
+}
+
+/* -------------------------------------------------- inner page masthead --- */
+.pagehead{
+  position:relative; overflow:hidden;
+  padding-block:clamp(50px,6vw,88px) clamp(42px,5vw,70px);
+  border-bottom:1px solid var(--line);
+}
+.pagehead__bg{ position:absolute; inset:0; z-index:0; background-size:cover; background-position:50% 46%; opacity:var(--head-op); }
+.pagehead__veil{
+  position:absolute; inset:0; z-index:1;
+  background:linear-gradient(94deg, var(--veil-a) 10%, var(--veil-p) 58%, var(--veil-q) 100%);
+}
+.pagehead__in{ position:relative; z-index:2; }
+.pagehead__ttl{ font-size:clamp(2.1rem,4.6vw,3.7rem); font-weight:800; letter-spacing:-.033em; margin:20px 0 20px; }
+.pagehead__ttl em{ font-family:var(--body); font-style:italic; font-weight:400; letter-spacing:-.014em; color:var(--flame); }
+
+/* ------------------------------------------------- offerings parts list --- */
+.speclist{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(178px,100%),1fr)); gap:1px; background:var(--line); }
+.band--paper .speclist{ background:var(--line-paper); }
+.speclist li{
+  background:var(--ink); padding:13px 15px;
+  font-family:var(--mono); font-size:.63rem; font-weight:500;
+  letter-spacing:.09em; text-transform:uppercase; color:var(--mist);
+  display:flex; align-items:flex-start; gap:8px; line-height:1.45;
+}
+.band--paper .speclist li{ background:var(--band-alt); }
+.speclist li::before{ content:"—"; color:var(--flame); flex:0 0 auto; }
+
+/* ------------------------------------------------------- service entry --- */
+.svc + .svc{ border-top:1px solid var(--line); }
+.band--paper .svc + .svc{ border-top-color:var(--line-paper); }
+
+/* ------------------------------------------------------- form details --- */
+/* Required markers read as flame so they scan without shouting. */
+.field > span b{ color:var(--flame); font-weight:500; }
+.formnote{ margin:0; }
+.formnote span:first-child{ flex:0 0 auto; }
+.formnote [data-formstatus]{ text-transform:none; letter-spacing:.04em; line-height:1.55; }
+/* No opacity here: --mist-2 is already far dimmer than typed text (--fg), and
+   fading it further took the placeholder below 4.5:1 in both themes. */
+.field input::placeholder,.field textarea::placeholder{ color:var(--mist-2); opacity:1; }
+
+/* Page-head data strip: the spec list sits on the photograph as an opaque
+   band, so the backdrop reads behind it rather than through it. */
+.pagehead .speclist{ background:var(--line-2); }
+
+/* ==========================================================================
+   THEME CONTROL AND BRAND PLATE
+   ========================================================================== */
+
+/* ---------------------------------------------------------- theme toggle ---
+   An aperture, not a sun: half the disc filled, rotating through 180° on
+   change. It borrows the 1px bordered square of the menu button so the two
+   controls read as one pair, and it stays quiet — the hero panel is where
+   this design spends its attention.
+   ------------------------------------------------------------------------ */
+.themetoggle{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:38px; height:38px; flex:0 0 auto;
+  border:1px solid var(--line-2); color:var(--fg);
+  transition:border-color .2s var(--ease), color .2s var(--ease);
+}
+.themetoggle:hover{ border-color:var(--flame); color:var(--flame); }
+.themetoggle svg{ width:15px; height:15px; display:block; transition:transform .5s var(--ease); }
+:root[data-theme="light"] .themetoggle svg{ transform:rotate(180deg); }
+
+/* ------------------------------------------------------------ brand plate ---
+   The mark shown as a specimen rather than as decoration: framed, centred,
+   on a faint panel, and swapped to the correct ink weight by the theme. */
+.brandplate{
+  width:100%; aspect-ratio:1/1;
+  border:1px solid var(--line);
+  background-color:var(--panel-tint);
+  background-image:var(--lockup);
+  background-repeat:no-repeat;
+  background-position:50% 50%;
+  background-size:min(76%,430px) auto;
+}
+
+/* -------------------------------------------------------- form messages ---
+   The status line was setting colour inline, which cannot follow a theme.
+   These two classes resolve against the token contract instead. */
+.formnote [data-formstatus].is-warn{ color:var(--flame); }
+.formnote [data-formstatus].is-ok{ color:var(--conform); }
+
+/* One frame with no transitions, so a theme change reads as a change of stock
+   rather than as a handful of elements easing while the rest snaps. */
+:root.is-themeswap *,
+:root.is-themeswap *::before,
+:root.is-themeswap *::after{
+  transition:none !important;
+}
