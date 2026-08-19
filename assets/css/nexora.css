@@ -816,3 +816,241 @@ p,li,td,th,dd,figcaption,address,a{ overflow-wrap:break-word; }
 :root.is-themeswap *::after{
   transition:none !important;
 }
+
+/* ==========================================================================
+   MOTION LAYER
+   --------------------------------------------------------------------------
+   This site's argument is that a chemical is a claim until somebody measures
+   it. So its motion is instrumentation, not decoration. Three ideas, and
+   deliberately nothing else:
+
+     1. The hero closes on a chart-recorder trace that draws itself once, left
+        to right — the instrument the whole argument rests on, and the single
+        place this design raises its voice.
+     2. The masthead reports read position as a flame hairline. These pages
+        are set as a document, and position within a document is information.
+     3. Rows arrive in the order they are numbered. The 01–08 register is a
+        real sequence, so revealing it in sequence states something true
+        rather than merely animating.
+
+   Everything here is additive. The pages are complete and readable with this
+   whole block deleted, with JavaScript switched off, and with reduced motion
+   requested — see the override at the foot of the file.
+
+   Two hard constraints, both learned expensively. No `filter`,
+   `backdrop-filter`, `transform`, `perspective` or `will-change` may be added
+   to `.masthead`, or to any other ancestor of the fixed nav drawer: such an
+   element becomes the containing block for its `position:fixed` descendants,
+   which is what parked a 340px drawer past the right edge of every phone.
+   Every transform below sits either on a pseudo-element — a CHILD, so it
+   traps nothing — or on a leaf box with no fixed positioning inside it.
+   Second: entrances use `animation-fill-mode:both`, so the final frame is
+   held. An animation that never starts cannot leave content invisible.
+   ========================================================================== */
+
+:root{
+  /* Entrances decelerate harder than the interface's --ease, so they settle
+     instead of gliding to a halt. Neither curve overshoots: this is a
+     technical brand and a bounce would undercut every word on the page. */
+  --ease-out:  cubic-bezier(.16,.84,.28,1);
+  --ease-draw: cubic-bezier(.30,.62,.24,1);
+
+  /* Both of these are written by script; declared here so the resting state
+     is in the stylesheet rather than implied by a var() fallback. Unset means
+     "no read position yet" and "no place in a cascade" — which is exactly the
+     state a page should be in when JavaScript never runs. */
+  --nx-prog: 0;
+  --nx-d:    0ms;
+}
+
+@keyframes nx-rise{
+  from{ opacity:0; transform:translate3d(0,20px,0); }
+  to  { opacity:1; transform:none; }
+}
+@keyframes nx-fade{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes nx-draw{
+  from{ clip-path:inset(0 100% 0 0); }
+  to  { clip-path:inset(0 0 0 0); }
+}
+@keyframes nx-carriage{
+  0%  { opacity:0;   transform:translate3d(0,0,0); }
+  10% { opacity:.85; }
+  86% { opacity:.42; }
+  100%{ opacity:0;   transform:translate3d(calc(100vw - 4px),0,0); }
+}
+@keyframes nx-underline{
+  from{ background-size:0% 2px; }
+  to  { background-size:100% 2px; }
+}
+@keyframes nx-ping{
+  0%      { transform:scale(1);   opacity:.55; }
+  70%,100%{ transform:scale(3.4); opacity:0; }
+}
+
+/* ------------------------------------------------------- hero entrance ---
+   Stamp, headline, lede, buttons, then the register panel — the order a
+   reader takes them in, roughly 90ms apart. Slow enough to be read as
+   sequence, short enough that nobody waiting to click is made to wait. */
+.hero__stamp{ animation:nx-rise .62s var(--ease-out) .04s both; }
+.hero__title{ animation:nx-rise .68s var(--ease-out) .13s both; }
+.hero__lede { animation:nx-rise .68s var(--ease-out) .22s both; }
+.hero__acts { animation:nx-rise .68s var(--ease-out) .31s both; }
+.caps       { animation:nx-rise .74s var(--ease-out) .26s both; }
+
+/* The eight service lines print into the panel in numeric order. Opacity
+   only: the panel is already travelling, and a second translate nested
+   inside it reads as slack rather than as sequence. */
+.caps__list li{ animation:nx-fade .42s linear both; }
+.caps__list li:nth-child(1){ animation-delay:.50s; }
+.caps__list li:nth-child(2){ animation-delay:.55s; }
+.caps__list li:nth-child(3){ animation-delay:.60s; }
+.caps__list li:nth-child(4){ animation-delay:.65s; }
+.caps__list li:nth-child(5){ animation-delay:.70s; }
+.caps__list li:nth-child(6){ animation-delay:.75s; }
+.caps__list li:nth-child(7){ animation-delay:.80s; }
+.caps__list li:nth-child(8){ animation-delay:.85s; }
+
+/* A live status light, not a decoration: one ring every 3.2s, faint enough
+   that it registers only in peripheral vision. */
+.hero__stamp .dot{ position:relative; }
+.hero__stamp .dot::after{
+  content:""; position:absolute; inset:0;
+  border:1px solid var(--conform); border-radius:50%;
+  animation:nx-ping 3.2s var(--ease-out) 1.6s infinite;
+}
+
+/* The photograph deliberately does NOT move. A hero image that slowly zooms is
+   the reflex choice and it competes with the only thing here worth watching.
+   The backdrop stays still; the content arrives, and the instrument draws. */
+
+/* --------------------------------------------------- the thesis phrase ---
+   The italic phrase carries the sentence's argument, so it takes the one
+   piece of emphasis in the hero: a flame rule drawn under it, after the
+   headline has settled. Painted as a background image rather than a border or
+   a pseudo-element, because a background repeats per line box — so it still
+   works when the phrase wraps onto two lines, which it does on a phone. */
+.hero__title em,
+.pagehead__ttl em{
+  background-image:linear-gradient(var(--flame),var(--flame));
+  background-repeat:no-repeat;
+  background-position:0 100%;
+  background-size:0% 2px;
+  padding-bottom:.06em;
+  animation:nx-underline .72s var(--ease-out) 1s both;
+}
+
+/* ------------------------------------------------------ chart recorder ---
+   The signature. A hairline trace with one broad peak and a small second
+   component on the tail — the shape a real detector writes — drawn across the
+   foot of the hero as the section's closing rule.
+
+   The reveal is a `clip-path` wipe rather than the usual stroke-dash trick,
+   for one concrete reason: the SVG is stretched to the viewport with
+   `preserveAspectRatio="none"`, and dash lengths do not survive non-uniform
+   scaling, whereas `vector-effect:non-scaling-stroke` keeps the line exactly
+   2px wide from a 360px phone to a 2560px monitor. A wipe over a monotonic
+   path is indistinguishable from a pen drawing it.
+
+   The element is injected by script, because it carries no information. If
+   the script never runs, the hero is simply a hero. */
+.hero__trace{
+  position:absolute; z-index:3; pointer-events:none;
+  left:0; right:0; bottom:0;
+  height:clamp(46px,7vw,86px);
+  overflow:visible;                        /* the glow must not be clipped */
+  animation:nx-draw 1.8s var(--ease-draw) .42s both;
+}
+.hero__trace path{
+  fill:none;
+  stroke:var(--flame);
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+  filter:drop-shadow(0 0 7px var(--flame-line));
+}
+/* The pen carriage. A recorder's head travels along a vertical axis, so this
+   is a vertical bar rather than a dot chasing the line — which also means it
+   never has to know the path's height. Timed against the wipe with the same
+   duration, delay and curve, so the two stay locked together. */
+.hero.nx-traced::before{
+  content:""; position:absolute; z-index:4; pointer-events:none;
+  left:0; bottom:0; width:3px;
+  height:clamp(46px,7vw,86px);
+  background:linear-gradient(to top, transparent, var(--flame) 40%, transparent);
+  filter:blur(1px);
+  opacity:0;
+  animation:nx-carriage 1.8s var(--ease-draw) .42s both;
+}
+
+/* -------------------------------------------------------- read position ---
+   A flame hairline along the foot of the masthead, replacing its rule as it
+   fills. `--nx-prog` is written by script on scroll; unset, it resolves to 0
+   and the bar simply is not there. Sits on the pseudo-element so the
+   transform cannot capture the fixed drawer. */
+.masthead::after{
+  content:""; position:absolute; z-index:1; pointer-events:none;
+  left:0; right:0; bottom:-1px; height:2px;
+  background:var(--flame);
+  transform:scaleX(var(--nx-prog,0));
+  transform-origin:0 50%;
+}
+
+/* ---------------------------------------------------- staggered reveals ---
+   The counterpart to `.rv`, for groups of repeating rows. Script assigns the
+   class and writes `--nx-d` as each row's position in its group, so the group
+   arrives in document order — and assigns nothing at all where
+   IntersectionObserver is missing, which is why an unobserved row can never
+   be left at opacity 0. */
+.nx-rv{ opacity:0; transform:translate3d(0,20px,0); }
+.nx-rv.is-in{
+  opacity:1; transform:none;
+  transition:opacity .68s var(--ease-out) var(--nx-d,0ms),
+             transform .68s var(--ease-out) var(--nx-d,0ms);
+}
+/* Table rows fade without travelling: shifting a `tr` fights the table's own
+   layout, and a register should look typeset rather than assembled. */
+.nx-soft{ opacity:0; }
+.nx-soft.is-in{ opacity:1; transition:opacity .5s linear var(--nx-d,0ms); }
+
+/* Each section's rail draws itself down as the section is entered — the same
+   gesture as the trace, at the scale of a single heading. Below 680px the
+   rail turns horizontal, so the scale axis turns with it. */
+.nx-rail{ transform:scaleY(0); transform-origin:50% 0; }
+.nx-rail.is-in{ transform:scaleY(1); transition:transform .8s var(--ease-out) .06s; }
+@media (max-width:680px){
+  .nx-rail{ transform:scaleX(0); transform-origin:0 50%; }
+  .nx-rail.is-in{ transform:scaleX(1); }
+}
+
+/* ------------------------------------------------------- motion opt-out ---
+   The block earlier in this file collapses every duration to near zero, which
+   is right for transitions but leaves a delayed entrance holding its opening
+   frame — briefly blank — before it snaps in. So these are switched off
+   outright rather than sped up: each element renders in its resting state,
+   and the two effects that are purely atmospheric are removed. The thesis
+   underline is kept, drawn: it is emphasis, and only its arrival was motion.
+   ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion:reduce){
+  .hero__stamp,
+  .hero__title,
+  .hero__lede,
+  .hero__acts,
+  .caps,
+  .caps__list li{ animation:none !important; }
+
+  .hero__title em,
+  .pagehead__ttl em{
+    animation:none !important;
+    background-size:100% 2px !important;
+  }
+
+  .hero__trace{ animation:none !important; clip-path:none !important; }
+
+  .hero.nx-traced::before,
+  .hero__stamp .dot::after{ display:none !important; }
+
+  .nx-rv,
+  .nx-soft{ opacity:1 !important; transform:none !important; }
+  .nx-rail{ transform:none !important; }
+}
