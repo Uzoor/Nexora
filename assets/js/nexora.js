@@ -93,6 +93,78 @@
     if (m.matches) setNav(false);
   });
 
+  /* ------------------------------------------------ staggered reveals ---
+     The reveal below treats a block as one slab. That is right for a heading
+     or a photograph and wrong for a group of rows: the rows ARE the sequence,
+     so the rows should carry it. For the groups named here the container's
+     `.rv` is handed down to its children at runtime, which leaves all four
+     HTML files untouched and keeps one guarantee intact — the class that
+     starts a row at opacity 0 is only ever applied when an observer exists to
+     take it off again. No observer, no class, no invisible content.
+
+     Delay is decided when a row arrives rather than assigned up front, and
+     from the rows landing in the SAME observer callback, sorted by position on
+     screen instead of position in the document so a grid cascades the way it
+     is read. A row that comes into view on its own therefore waits for
+     nothing: no part of this ever lags behind the scroll.
+     ------------------------------------------------------------------- */
+  if ('IntersectionObserver' in window && !reduced) {
+    var STEP = new WeakMap();
+    var STAGGER_CAP = 7;              // past this the tail is imperceptible
+    var GROUPS = [
+      /* container     rows               travels  ms apart */
+      ['.svcindex',    '.svcindex__row',  true,    56],
+      ['.method',      '.step',           true,    76],
+      ['.grid3',       '.cell',           true,    66],
+      ['.stmt',        '.stmt__b',        true,    86],
+      ['.offices',     '.office',         true,    66],
+      ['.facts',       '.fact',           true,    74],
+      /* These fade without travelling. Shifting a `tr` fights the table's own
+         layout, and the offerings lists sit inside a block that is already
+         moving, so a second translate would read as slack rather than order. */
+      ['.dataset',     'tbody tr',        false,   22],
+      ['.speclist',    'li',              false,   18]
+    ];
+
+    var sio = new IntersectionObserver(function (entries) {
+      var arrived = entries.filter(function (en) { return en.isIntersecting; });
+      arrived.sort(function (a, b) {
+        var dy = a.boundingClientRect.top - b.boundingClientRect.top;
+        // Same row within a few pixels? Then order left to right.
+        return Math.abs(dy) > 4 ? dy : a.boundingClientRect.left - b.boundingClientRect.left;
+      });
+      arrived.forEach(function (en, i) {
+        var step = STEP.get(en.target) || 60;
+        en.target.style.setProperty('--nx-d', (Math.min(i, STAGGER_CAP) * step) + 'ms');
+        en.target.classList.add('is-in');
+        sio.unobserve(en.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+
+    GROUPS.forEach(function (g) {
+      Array.prototype.forEach.call(document.querySelectorAll(g[0]), function (box) {
+        // Nothing above the fold: the hero runs its own load sequence, and a
+        // page heading should be readable the instant it is painted.
+        if (box.closest('.hero, .pagehead')) return;
+        var rows = box.querySelectorAll(g[1]);
+        if (!rows.length) return;
+        box.classList.remove('rv', 'rv-d1', 'rv-d2', 'rv-d3');
+        Array.prototype.forEach.call(rows, function (row) {
+          STEP.set(row, g[3]);
+          row.classList.add(g[2] ? 'nx-rv' : 'nx-soft');
+          sio.observe(row);
+        });
+      });
+    });
+
+    /* Each section's rail draws itself down as the section is entered — the
+       same gesture as the hero trace, at the scale of a single heading. */
+    Array.prototype.forEach.call(document.querySelectorAll('.rail__line'), function (line) {
+      line.classList.add('nx-rail');
+      sio.observe(line);
+    });
+  }
+
   /* --------------------------------------------------- scroll reveals --- */
   var revealables = document.querySelectorAll('.rv');
   if (!('IntersectionObserver' in window) || reduced) {
@@ -107,6 +179,76 @@
       });
     }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
     Array.prototype.forEach.call(revealables, function (n) { io.observe(n); });
+  }
+
+  /* ------------------------------------------------------ read position ---
+     How far through the document the reader has come, written to a custom
+     property and drawn by `.masthead::after`. Throttled to one animation
+     frame, and it reads only numbers the browser has already computed, so no
+     layout is forced on a scroll.
+     ---------------------------------------------------------------------- */
+  var progressPending = false;
+
+  function writeProgress() {
+    progressPending = false;
+    var span = root.scrollHeight - root.clientHeight;
+    var seen = span > 8
+      ? Math.min(Math.max((window.pageYOffset || root.scrollTop) / span, 0), 1)
+      : 0;                                  // page does not scroll: no bar
+    root.style.setProperty('--nx-prog', seen.toFixed(4));
+  }
+
+  function queueProgress() {
+    if (progressPending) return;
+    progressPending = true;
+    requestAnimationFrame(writeProgress);
+  }
+
+  window.addEventListener('scroll', queueProgress, { passive: true });
+  window.addEventListener('resize', queueProgress, { passive: true });
+  writeProgress();
+
+  /* -------------------------------------------------------- chart trace ---
+     The hero's closing rule: a detector trace, drawn once, left to right.
+     Built here rather than written into the markup because it states nothing
+     — it is the visual form of the site's own argument, so a page that never
+     gets it loses nothing a reader needed.
+     One broad peak with a small second component on the tail, the shape a real
+     detector writes. Monotonic in x, which is what lets a clip-path wipe pass
+     for a pen. Baseline at 76 of 80 units, so it lands on the section divider
+     at every viewport height.
+     ---------------------------------------------------------------------- */
+  var hero = document.querySelector('.hero');
+  if (hero && !reduced) {
+    var SVGNS = 'http://www.w3.org/2000/svg';
+    var trace = document.createElementNS(SVGNS, 'svg');
+    trace.setAttribute('class', 'hero__trace');
+    trace.setAttribute('viewBox', '0 0 1200 80');
+    trace.setAttribute('preserveAspectRatio', 'none');
+    trace.setAttribute('aria-hidden', 'true');
+    trace.setAttribute('focusable', 'false');
+
+    var pen = document.createElementNS(SVGNS, 'path');
+    pen.setAttribute('d',
+      'M0 76 H420' +                       // baseline
+      ' C462 76 486 68 508 52' +           // the rise begins
+      ' C526 38 544 10 580 10' +           // apex, just left of centre
+      ' C610 10 626 30 640 44' +           // the steep side of the fall
+      ' C660 62 686 71 720 74' +           // and the long tail
+      ' C760 76 790 76 830 76' +
+      ' H880' +
+      ' C906 76 918 66 934 60' +           // a second, minor component
+      ' C948 55 960 62 972 71' +
+      ' C980 74 988 76 1000 76' +
+      ' H1200');
+    /* Also set as an attribute, not only in CSS: older Safari honoured the
+       presentation attribute but not the property, and without it the line
+       thins to a hair on a phone and thickens on a wide monitor. */
+    pen.setAttribute('vector-effect', 'non-scaling-stroke');
+    trace.appendChild(pen);
+
+    hero.appendChild(trace);
+    hero.classList.add('nx-traced');       // gates the pen carriage in CSS
   }
 
   /* ------------------------------------------------- number counters --- */
